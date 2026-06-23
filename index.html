@@ -1192,16 +1192,23 @@
       }
       .scroll-stack-left, .scroll-stack-right {
         width: 100%;
-        padding: 5vh 20px 10vh;
+        padding: 5vh 20px 5vh;
       }
       .right-sticky-content {
         position: relative;
         top: 0;
         height: auto;
-        padding: 2rem 0;
+        padding: 0;
       }
       .scroll-stack-card {
-        height: 320px;
+        height: auto;
+        margin-bottom: 20px;
+        position: relative;
+      }
+      .reveal-text, .stat-pill, .cta-btn {
+        opacity: 1 !important;
+        filter: none !important;
+        transform: none !important;
       }
     }
     /* BUY ROTATING SECTION */
@@ -1845,6 +1852,14 @@
     function updateScrollStack() {
       if (!stackCards.length || !stackOffsets.length) return;
 
+      if (window.innerWidth <= 992) {
+        stackCards.forEach(card => {
+          card.style.transform = 'none';
+          card.style.filter = '';
+        });
+        return;
+      }
+
       const scrollTop = window.scrollY;
       const containerHeight = window.innerHeight;
       const stackPositionPx = parsePercentage(stackPosition, containerHeight);
@@ -1921,45 +1936,49 @@
   const gallerySection = document.getElementById('gallery');
   
   const texts = gsap.utils.toArray('.reveal-text');
-  texts.forEach((text, i) => {
-    gsap.to(text, {
+  
+  let mm = gsap.matchMedia();
+  mm.add("(min-width: 993px)", () => {
+    texts.forEach((text, i) => {
+      gsap.to(text, {
+        scrollTrigger: {
+          trigger: gallerySection,
+          start: () => `top+=${i * window.innerHeight * 0.3} top`,
+          end: () => `+=${window.innerHeight * 0.4}`,
+          scrub: 1,
+        },
+        opacity: 1,
+        filter: 'blur(0px)',
+        rotation: 0,
+        y: 0,
+        ease: "power2.out"
+      });
+    });
+
+    gsap.to('.stat-pill', {
       scrollTrigger: {
         trigger: gallerySection,
-        start: () => `top+=${i * window.innerHeight * 0.3} top`,
-        end: () => `+=${window.innerHeight * 0.4}`,
+        start: () => `top+=${texts.length * window.innerHeight * 0.3} top`,
+        end: () => `+=${window.innerHeight * 0.3}`,
         scrub: 1,
       },
       opacity: 1,
-      filter: 'blur(0px)',
-      rotation: 0,
+      y: 0,
+      stagger: 0.1,
+      ease: "power2.out"
+    });
+
+    gsap.to('.cta-btn', {
+      scrollTrigger: {
+        trigger: gallerySection,
+        start: () => `top+=${(texts.length + 0.5) * window.innerHeight * 0.3} top`,
+        end: () => `+=${window.innerHeight * 0.3}`,
+        scrub: 1,
+      },
+      opacity: 1,
       y: 0,
       ease: "power2.out"
     });
-  });
-
-  gsap.to('.stat-pill', {
-    scrollTrigger: {
-      trigger: gallerySection,
-      start: () => `top+=${texts.length * window.innerHeight * 0.3} top`,
-      end: () => `+=${window.innerHeight * 0.3}`,
-      scrub: 1,
-    },
-    opacity: 1,
-    y: 0,
-    stagger: 0.1,
-    ease: "power2.out"
-  });
-
-  gsap.to('.cta-btn', {
-    scrollTrigger: {
-      trigger: gallerySection,
-      start: () => `top+=${(texts.length + 0.5) * window.innerHeight * 0.3} top`,
-      end: () => `+=${window.innerHeight * 0.3}`,
-      scrub: 1,
-    },
-    opacity: 1,
-    y: 0,
-    ease: "power2.out"
   });
 </script>
 
